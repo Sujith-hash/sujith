@@ -1,0 +1,6 @@
+{
+  "name": "BlinkMart",
+  "description": "10-15 minute quick grocery delivery app with real-time tracking, live map view, and multi-portal panels for Customers, Merchants, Delivery Agents, and Admins.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

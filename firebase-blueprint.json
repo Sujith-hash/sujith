@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "User profile with contact info and role in BlinkMart ecosystem",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["CUSTOMER", "MERCHANT", "RIDER", "ADMIN"] },
+        "phone": { "type": "string" },
+        "defaultAddress": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "role", "createdAt"]
+    },
+    "order": {
+      "title": "Order",
+      "description": "Quick grocery delivery order placed by user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "deliveryAddress": { "type": "string" },
+        "grandTotal": { "type": "number" },
+        "itemTotal": { "type": "number" },
+        "status": { "type": "string", "enum": ["PLACED", "MERCHANT_ACCEPTED", "PACKING", "OUT_FOR_DELIVERY", "NEARBY", "DELIVERED", "CANCELLED"] },
+        "deliveryOtp": { "type": "string" },
+        "riderName": { "type": "string" },
+        "riderPhone": { "type": "string" },
+        "liveProgress": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "grandTotal", "status", "deliveryOtp", "createdAt"]
+    },
+    "inventoryItem": {
+      "title": "InventoryItem",
+      "description": "Store stock item managed by merchant partner",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "unit": { "type": "string" },
+        "price": { "type": "number" },
+        "inStock": { "type": "boolean" },
+        "emoji": { "type": "string" },
+        "storeId": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "price", "inStock", "storeId"]
+    }
+  },
+  "firestore": {
+    "rules": {
+      "users": {
+        "path": "/users/{userId}",
+        "allow": {
+          "read": "request.auth != null && request.auth.uid == userId",
+          "write": "request.auth != null && request.auth.uid == userId"
+        }
+      },
+      "userOrders": {
+        "path": "/users/{userId}/orders/{orderId}",
+        "allow": {
+          "read": "request.auth != null && (request.auth.uid == userId || request.auth.token.role == 'RIDER' || request.auth.token.role == 'MERCHANT' || request.auth.token.role == 'ADMIN')",
+          "write": "request.auth != null && request.auth.uid == userId"
+        }
+      },
+      "inventory": {
+        "path": "/stores/{storeId}/inventory/{productId}",
+        "allow": {
+          "read": "request.auth != null",
+          "write": "request.auth != null"
+        }
+      }
+    }
+  }
+}
